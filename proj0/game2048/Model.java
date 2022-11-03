@@ -138,15 +138,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
-        boolean emptySpace = false;
         for (int c = 0; c < b.size(); c += 1) {
             for (int r = 0; r < b.size(); r += 1) {
                 if (b.tile(c, r) == null) {
-                    emptySpace = true;
+                    return true;
                 }
             }
         }
-        return emptySpace;
+        return false;
     }
 
     /**
@@ -156,18 +155,17 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
-        boolean maxTile = false;
         for (int c = 0; c < b.size(); c += 1) {
             for (int r = 0; r < b.size(); r += 1) {
                 Tile t = b.tile(c, r);
                 if (t != null) {
                     if (t.value() == MAX_PIECE) {
-                        maxTile = true;
+                        return true;
                     }
                 }
             }
         }
-        return maxTile;
+        return false;
     }
 
     /**
@@ -178,6 +176,40 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b) == true) {
+            return true;
+        }
+        for (int c = 0; c < b.size(); c += 1) {
+            for (int r = 0; r < b.size(); r += 1) {
+                Tile t = b.tile(c, r);
+                Tile t_left = null;
+                Tile t_up = null;
+                Tile t_right = null;
+                Tile t_down = null;
+
+                if (c-1 >= 0) {
+                    t_left = b.tile(c-1, r);
+                }
+                if (r+1 < b.size()) {
+                    t_up = b.tile(c, r+1);
+                }
+                if (c+1 < b.size()) {
+                    t_right = b.tile(c+1, r);
+                }
+                if (r-1 >= 0) {
+                    t_down = b.tile(c, r-1);
+                }
+
+                Tile[] t_sides = new Tile[]{t_left, t_up, t_right, t_down};
+                for (Tile t_side : t_sides) {
+                    if (t_side != null) {
+                        if (t.value() == t_side.value()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
