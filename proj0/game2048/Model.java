@@ -118,15 +118,14 @@ public class Model extends Observable {
         for (int c = 0; c < board.size(); c += 1) {
 
             int r_merged = 0;
-            for (int r = board.size() - 1; r >= 0; r -= 1) {
+            for (int r = board.size() - 2; r >= 0; r -= 1) {
                 Tile t = board.tile(c, r);
 
                 if (t != null) {
-                    //System.out.println(t.col());
                     boolean merge = false;
                     boolean stop = false;
-                    for (int r_up = t.row() + 1; r_up < board.size(); r_up += 1) {
-                        Tile t_up = board.tile(t.col(), r_up);
+                    for (int r_up = r + 1; r_up < board.size(); r_up += 1) {
+                        Tile t_up = board.tile(c, r_up);
                         if (t_up != null) {
                             if ((r_up != r_merged) & (t.value() == t_up.value())) {
                                 board.move(c, r_up, t);
