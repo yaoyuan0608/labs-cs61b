@@ -113,37 +113,48 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);
+
         for (int c = 0; c < board.size(); c += 1) {
-            for (int r = board.size()-1; r >= 0; r -= 1) {
+
+            int r_merged = 0;
+            for (int r = board.size() - 1; r >= 0; r -= 1) {
                 Tile t = board.tile(c, r);
+
                 if (t != null) {
-                    int stop_row = getStopRow(t);
-                    board.move(c, stop_row, t);
+                    //System.out.println(t.col());
+                    boolean merge = false;
+                    boolean stop = false;
+                    for (int r_up = t.row() + 1; r_up < board.size(); r_up += 1) {
+                        Tile t_up = board.tile(t.col(), r_up);
+                        if (t_up != null) {
+                            if ((r_up != r_merged) & (t.value() == t_up.value())) {
+                                board.move(c, r_up, t);
+                                score += t.value() * 2;
+                                merge = true;
+                                r_merged = r_up;
+                                break;
+                            }
+                            board.move(c, r_up - 1, t);
+                            stop = true;
+                            break;
+                        }
+                    }
+                    if ((merge == false) & (stop == false)) {
+                        board.move(c, board.size() - 1, t);
+                    }
                     changed = true;
-                    score += 7;
                 }
             }
         }
+
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
-    }
-
-    public int getStopRow(Tile t) {
-        for (int r = board.size()-1; r > t.row(); r -= 1) {
-            int t_col = t.col();
-            Tile t_up = board.tile(t_col, r);
-            if (t_up != null) {
-                if (t.value() ==  t_up.value()) {
-                    return r;
-                }
-                return r-1;
-            }
-        }
-        return board.size()-1;
     }
 
 
